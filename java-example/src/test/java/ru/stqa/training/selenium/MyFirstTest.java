@@ -19,4 +19,14 @@ public class MyFirstTest extends TestBase {
         wait.until(titleIs("webdriver - Поиск в Google"));
     }
 
+    @Test
+    public void litecartAdminLoginTest() {
+        driver.get("http://localhost/litecart/admin/login.php");
+
+        driver.findElement(By.name("username")).sendKeys("admin");
+        driver.findElement(By.name("password")).sendKeys("admin");
+        driver.findElement(By.name("login")).click();
+
+    }
+
 }
