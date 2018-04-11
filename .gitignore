@@ -1,4 +1,10 @@
-java-example/build/
-java-example/.gradle/
-.idea/workspace.xml
+.gradle
+build/
+out/
+*.log
+
 .idea/runConfigurations/
+
+.idea/workspace.xml
+
+
