@@ -1,9 +1,6 @@
 package ru.stqa.training.selenium.appmanager;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 
 import java.io.File;
 
@@ -48,8 +45,15 @@ public class HelperBase {
         try {
             wd.findElement(locator);
             return true;
+        } catch (InvalidSelectorException ex) {
+            throw ex;
         } catch (NoSuchElementException ex) {
             return false;
         }
     }
+
+    protected boolean areElementsPresent(By locator) {
+        return wd.findElements(locator).size() > 0;
+    }
+
 }

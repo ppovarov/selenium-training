@@ -3,9 +3,11 @@ package ru.stqa.training.selenium.appmanager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class LitecartHelper extends HelperBase {
 
@@ -22,6 +24,7 @@ public class LitecartHelper extends HelperBase {
     }
 
     public void clickMenuItems() {
+        SoftAssert softAssert = new SoftAssert();
         List<String> items = wd.findElements(By.xpath("//div[@id='box-apps-menu-wrapper']//span[@class='name']"))
                 .stream()
                 .map(WebElement::getText)
@@ -29,7 +32,8 @@ public class LitecartHelper extends HelperBase {
 
         for (String item : items) {
             click(By.xpath(String.format("//span[@class='name' and text()='%s']", item)));
-            System.out.println(item);
+            softAssert.assertEquals(isElementPresent(By.tagName("h1")), true, item);
+
             List<String> subItems = wd.findElements(By.xpath("//li[@class='selected']/ul//span[@class='name']"))
                     .stream()
                     .map(WebElement::getText)
@@ -37,12 +41,10 @@ public class LitecartHelper extends HelperBase {
 
             for (String subItem : subItems) {
                 click(By.xpath(String.format("//span[@class='name' and text()='%s']", subItem)));
-                System.out.println(item + " - " + subItem + " (" + getPageHeading() + ")");
-                //check heading
+                softAssert.assertEquals(isElementPresent(By.tagName("h1")), true, subItem);
             }
-
         }
-
+        softAssert.assertAll();
     }
 
     public String getPageHeading() {
