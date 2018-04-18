@@ -56,4 +56,8 @@ public class HelperBase {
         return wd.findElements(locator).size() > 0;
     }
 
+    protected boolean areElementsPresent(WebElement element, By locator) {
+        return element.findElements(locator).size() > 0;
+    }
+
 }

@@ -23,6 +23,10 @@ public class LitecartHelper extends HelperBase {
         click(By.name("login"));
     }
 
+    public void openMainPage() {
+        wd.get("http://localhost/litecart/");
+    }
+
     public void clickMenuItems() {
         SoftAssert softAssert = new SoftAssert();
         List<String> items = wd.findElements(By.xpath("//div[@id='box-apps-menu-wrapper']//span[@class='name']"))
@@ -50,4 +54,50 @@ public class LitecartHelper extends HelperBase {
     public String getPageHeading() {
         return wd.findElement(By.tagName("h1")).getText();
     }
+
+    public void checkStickers() {
+        SoftAssert softAssert = new SoftAssert();
+        List<WebElement> elements = wd.findElements(By.cssSelector("li.product.column.shadow.hover-light"));
+        for (WebElement element: elements){
+            String name = element.findElement(By.cssSelector("div.name")).getText();
+            softAssert.assertEquals(element.findElements(By.cssSelector("div.sticker")).size(), 1, name);
+        }
+        softAssert.assertAll();
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

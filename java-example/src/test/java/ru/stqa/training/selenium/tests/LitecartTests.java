@@ -13,6 +13,12 @@ public class LitecartTests extends TestBase {
     public void testLeftNavigationMenu() {
         app.litecart().loginAdmin();
         app.litecart().clickMenuItems();
+
     }
 
+    @Test
+    public void testStickers() {
+        app.litecart().openMainPage();
+        app.litecart().checkStickers();
+    }
 }
