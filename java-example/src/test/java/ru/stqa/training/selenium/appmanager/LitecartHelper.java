@@ -57,7 +57,7 @@ public class LitecartHelper extends HelperBase {
 
     public void checkStickers() {
         SoftAssert softAssert = new SoftAssert();
-        List<WebElement> elements = wd.findElements(By.cssSelector("li.product.column.shadow.hover-light"));
+        List<WebElement> elements = wd.findElements(By.cssSelector("li.product"));
         for (WebElement element: elements){
             String name = element.findElement(By.cssSelector("div.name")).getText();
             softAssert.assertEquals(element.findElements(By.cssSelector("div.sticker")).size(), 1, name);
