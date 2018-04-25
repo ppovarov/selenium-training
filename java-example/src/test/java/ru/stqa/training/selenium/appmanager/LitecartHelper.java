@@ -5,8 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.asserts.SoftAssert;
 import ru.stqa.training.selenium.model.Country;
+import ru.stqa.training.selenium.model.Product;
 import ru.stqa.training.selenium.model.Zone;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,7 +87,6 @@ public class LitecartHelper extends HelperBase {
         softAssert.assertAll();
     }
 
-
     public List<Country> getCountries() {
         openCountriesPage();
         List<Country> countries = new ArrayList<Country>();
@@ -121,7 +122,6 @@ public class LitecartHelper extends HelperBase {
         return zones;
     }
 
-
     public List<Country> getGeoZonesCountries() {
         openGeoZonesPage();
         List<Country> countries = new ArrayList<Country>();
@@ -134,8 +134,7 @@ public class LitecartHelper extends HelperBase {
                     .withName(cells.get(2).getText())
                     .withZonesCount(Integer.parseInt(cells.get(3).getText())));
         }
-        countries.stream()
-                .forEach((c) -> c.setZones(getGeoZonesCountryZones(c)));
+        countries.forEach((c) -> c.setZones(getGeoZonesCountryZones(c)));
 
         return countries;
     }
@@ -157,6 +156,59 @@ public class LitecartHelper extends HelperBase {
                     .withName(cells.get(2).findElement(By.xpath(".//option[@selected]")).getText()));
         }
         return zones;
+    }
+
+    public void openFirstCampaignsProduct() {
+        wd.findElement(By.cssSelector("div#box-campaigns li.product")).click();
+    }
+
+    public Product getFirstCampaignsProduct() {
+        WebElement prod = wd.findElement(By.cssSelector("div#box-campaigns li.product"));
+
+        String name = prod.findElement(By.cssSelector("div.name")).getText();
+
+        WebElement regularPrice = prod.findElement(By.cssSelector(".regular-price"));
+        String price = regularPrice.getText();
+        Color priceColor = org.openqa.selenium.support.Color.fromString(regularPrice.getCssValue("color")).getColor();
+        String priceStyle = regularPrice.getTagName();
+        String priceSize = regularPrice.getCssValue("font-size");
+
+        WebElement campaignPrice = prod.findElement(By.cssSelector(".campaign-price"));
+        String discountPrice = campaignPrice.getText();
+        Color discountPriceColor = org.openqa.selenium.support.Color.fromString(campaignPrice.getCssValue("color")).getColor();
+        String discountPriceStyle = campaignPrice.getTagName();
+        String discountPriceSize = campaignPrice.getCssValue("font-size");
+
+        String link = prod.findElement(By.cssSelector(".link")).getAttribute("href");
+
+        return new Product()
+                .withName(name)
+                .withPrice(price).withPriceColor(priceColor).withPriceStyle(priceStyle).withPriceSize(priceSize)
+                .withDiscountPrice(discountPrice).withDiscountPriceColor(discountPriceColor).withDiscountPriceStyle(discountPriceStyle).withDiscountPriceSize(discountPriceSize)
+                .withLink(link);
+    }
+
+    public Product getProductDetails(String link) {
+        wd.get(link);
+
+        String name = wd.findElement(By.cssSelector("[itemprop=name]")).getText();
+
+        WebElement regularPrice = wd.findElement(By.cssSelector(".regular-price"));
+        String price = regularPrice.getText();
+        Color priceColor = org.openqa.selenium.support.Color.fromString(regularPrice.getCssValue("color")).getColor();
+        String priceStyle = regularPrice.getTagName();
+        String priceSize = regularPrice.getCssValue("font-size");
+
+        WebElement campaignPrice = wd.findElement(By.cssSelector(".campaign-price"));
+        String discountPrice = campaignPrice.getText();
+        Color discountPriceColor = org.openqa.selenium.support.Color.fromString(campaignPrice.getCssValue("color")).getColor();
+        String discountPriceStyle = campaignPrice.getTagName();
+        String discountPriceSize = campaignPrice.getCssValue("font-size");
+
+        return new Product()
+                .withName(name)
+                .withPrice(price).withPriceColor(priceColor).withPriceStyle(priceStyle).withPriceSize(priceSize)
+                .withDiscountPrice(discountPrice).withDiscountPriceColor(discountPriceColor).withDiscountPriceStyle(discountPriceStyle).withDiscountPriceSize(discountPriceSize);
     }
 }
 
