@@ -1,7 +1,9 @@
 package ru.stqa.training.selenium.tests;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+import ru.stqa.training.selenium.model.Account;
 import ru.stqa.training.selenium.model.Country;
 import ru.stqa.training.selenium.model.Product;
 import ru.stqa.training.selenium.model.Zone;
@@ -103,6 +105,20 @@ public class LitecartTests extends TestBase {
 
     double pxToDouble(String px) {
         return Double.parseDouble(px.substring(0, px.length() - 2));
+    }
+
+    @Test
+    public void testRegistration() {
+        long now = System.currentTimeMillis();
+        Account account = new Account()
+                .withEmail(String.format("email%s@notreal.com", now))
+                .withPassword("Password1");
+
+        app.litecart().createAccount(account);
+        app.litecart().logout();
+        boolean result = app.litecart().login(account);
+        Assert.assertTrue(result);
+        app.litecart().logout();
     }
 
 

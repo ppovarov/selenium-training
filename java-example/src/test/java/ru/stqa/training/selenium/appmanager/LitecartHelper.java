@@ -3,14 +3,19 @@ package ru.stqa.training.selenium.appmanager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.asserts.SoftAssert;
+import ru.stqa.training.selenium.model.Account;
 import ru.stqa.training.selenium.model.Country;
 import ru.stqa.training.selenium.model.Product;
 import ru.stqa.training.selenium.model.Zone;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +51,10 @@ public class LitecartHelper extends HelperBase {
 
     public void openEditGeoZonePage(int id) {
         wd.get(String.format("http://localhost/litecart/admin/?app=geo_zones&doc=edit_geo_zone&geo_zone_id=%s", id));
+    }
+
+    public void openCreateAccountPage() {
+        wd.get("http://localhost/litecart/en/create_account");
     }
 
 
@@ -209,6 +218,45 @@ public class LitecartHelper extends HelperBase {
                 .withName(name)
                 .withPrice(price).withPriceColor(priceColor).withPriceStyle(priceStyle).withPriceSize(priceSize)
                 .withDiscountPrice(discountPrice).withDiscountPriceColor(discountPriceColor).withDiscountPriceStyle(discountPriceStyle).withDiscountPriceSize(discountPriceSize);
+    }
+
+    public void createAccount(Account account) {
+        openCreateAccountPage();
+
+        wd.findElement(By.xpath("//input[@name='firstname']")).sendKeys("fname");
+        wd.findElement(By.xpath("//input[@name='lastname']")).sendKeys("lname");
+        wd.findElement(By.xpath("//input[@name='address1']")).sendKeys("123 Main st");
+        wd.findElement(By.xpath("//input[@name='postcode']")).sendKeys("10007");
+        wd.findElement(By.xpath("//input[@name='city']")).sendKeys("New York");
+
+        new Select(wd.findElement(By.xpath("//select[@name='country_code']"))).selectByValue("US");
+
+        wait = new FluentWait<WebDriver>(wd)
+                .withTimeout(Duration.ofMillis(100))
+                .pollingEvery(Duration.ofMillis(10))
+                .ignoring(NoSuchElementException.class);
+
+        WebElement select = wait.until(driver -> driver.findElement(By.xpath("//select[@name='zone_code']")));
+        new Select(select).selectByValue("NY");
+
+        wd.findElement(By.xpath("//input[@name='email']")).sendKeys(account.getEmail());
+        wd.findElement(By.xpath("//input[@name='phone']")).sendKeys("+12223334455");
+        wd.findElement(By.xpath("//input[@name='password']")).sendKeys(account.getPassword());
+        wd.findElement(By.xpath("//input[@name='confirmed_password']")).sendKeys(account.getPassword());
+
+        wd.findElement(By.xpath("//button[@name='create_account']")).click();
+    }
+
+    public boolean login(Account account) {
+        openMainPage();
+        wd.findElement(By.xpath("//input[@name='email']")).sendKeys(account.getEmail());
+        wd.findElement(By.xpath("//input[@name='password']")).sendKeys(account.getPassword());
+        wd.findElement(By.xpath("//button[@name='login']")).click();
+        return isElementPresent(By.xpath("//div[@class='notice success']"));
+    }
+
+    public void logout() {
+        wd.findElement(By.xpath("//a[text()='Logout']")).click();
     }
 }
 

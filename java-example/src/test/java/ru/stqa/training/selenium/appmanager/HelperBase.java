@@ -1,11 +1,13 @@
 package ru.stqa.training.selenium.appmanager;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.io.File;
 
 public class HelperBase {
     protected WebDriver wd;
+    protected Wait<WebDriver> wait;
 
     public HelperBase(WebDriver wd) {
         this.wd = wd;
