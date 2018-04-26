@@ -121,6 +121,20 @@ public class LitecartTests extends TestBase {
         app.litecart().logout();
     }
 
+    @Test
+    public void testProductCreation() {
+        app.litecart().loginAdmin();
+        long now = System.currentTimeMillis();
+
+        Product product = new Product()
+                .withName(String.format("Evil Duck %s", now))
+                .withPrice("14.99");
+
+        app.litecart().addNewProduct(product, now);
+
+        Assert.assertTrue(app.litecart().isProductExists(product));
+    }
+
 
 }
 

@@ -12,6 +12,7 @@ import ru.stqa.training.selenium.model.Product;
 import ru.stqa.training.selenium.model.Zone;
 
 import java.awt.*;
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -257,6 +258,77 @@ public class LitecartHelper extends HelperBase {
 
     public void logout() {
         wd.findElement(By.xpath("//a[text()='Logout']")).click();
+    }
+
+    public void openAddNewProductPage() {
+        click(By.xpath(String.format("//span[@class='name' and text()='%s']", "Catalog")));
+        click(By.xpath(String.format("//a[@class='button' and contains(text(),'%s')]", "Add New Product")));
+    }
+
+    public void addNewProduct(Product product, long now) {
+        openAddNewProductPage();
+
+        //GENERAL tab
+        WebElement generalTab = wd.findElement(By.xpath("//div[@id='tab-general']"));
+        //Status
+        generalTab.findElement(By.xpath(".//input[@name='status' and @value='1']")).click();
+        //Name
+        generalTab.findElement(By.xpath(".//input[@name='name[en]']")).sendKeys(product.getName());
+        //Code
+        generalTab.findElement(By.xpath(".//input[@name='code']")).sendKeys(String.format("code%s", now));
+        //Categories
+        By categoriesLocator = By.xpath(String.format(".//input[@data-name='%s' and @value='1']", "Rubber Ducks"));
+        generalTab.findElement(categoriesLocator).click();
+        //Default Category
+        new Select(generalTab.findElement(By.xpath(".//select[@name='default_category_id']"))).selectByVisibleText("Rubber Ducks");
+        //Product Groups
+        By productGroupsLocator = By.xpath(String.format(".//td[text()='%s']/preceding-sibling::td//input[@name='product_groups[]']", "Unisex"));
+        generalTab.findElement(productGroupsLocator).click();
+        //Quantity
+        generalTab.findElement(By.xpath(".//input[@name='quantity']")).clear();
+        generalTab.findElement(By.xpath(".//input[@name='quantity']")).sendKeys("100");
+        //Upload Images
+        By uploadImagesLocator = By.xpath("//div[@id='tab-general']//input[@name='new_images[]']");
+        File image = new File("src/test/resources/evil_duck.jpg");
+        attach(uploadImagesLocator, image);
+        //Date Valid From
+        generalTab.findElement(By.xpath("//input[@name='date_valid_from']")).sendKeys("12312017");
+        generalTab.findElement(By.xpath("//input[@name='date_valid_to']")).sendKeys("06302018");
+
+        //INFORMATION tab
+        wd.findElement(By.xpath("//a[text()='Information']")).click();
+        WebElement informationTab = wd.findElement(By.xpath("//div[@id='tab-information']"));
+        //Manufacturer
+        new Select(informationTab.findElement(By.xpath("//select[@name='manufacturer_id']"))).selectByVisibleText("ACME Corp.");
+        //Keywords
+        informationTab.findElement(By.xpath(".//input[@name='keywords']")).sendKeys("Keywords");
+        //Short Description
+        informationTab.findElement(By.xpath(".//input[@name='short_description[en]']")).sendKeys("Short Description");
+        //Description
+        informationTab.findElement(By.xpath(".//div[@class='trumbowyg-editor']")).click();
+        informationTab.findElement(By.xpath(".//div[@class='trumbowyg-editor']")).sendKeys("Description");
+        //Head Title
+        informationTab.findElement(By.xpath(".//input[@name='head_title[en]']")).sendKeys("Head Title");
+        //Meta Description
+        informationTab.findElement(By.xpath(".//input[@name='meta_description[en]']")).sendKeys("Meta Description");
+
+        //PRICES tab
+        wd.findElement(By.xpath("//a[text()='Prices']")).click();
+        WebElement pricesTab = wd.findElement(By.xpath("//div[@id='tab-prices']"));
+        //Purchase Price
+        pricesTab.findElement(By.xpath(".//input[@name='purchase_price']")).clear();
+        pricesTab.findElement(By.xpath(".//input[@name='purchase_price']")).sendKeys(product.getPrice().toString());
+        new Select(pricesTab.findElement(By.xpath("//select[@name='purchase_price_currency_code']"))).selectByVisibleText("US Dollars");
+        //Price
+        pricesTab.findElement(By.xpath(".//input[@name='prices[USD]']")).clear();
+        pricesTab.findElement(By.xpath(".//input[@name='prices[USD]']")).sendKeys(product.getPrice().toString());
+
+        wd.findElement(By.xpath("//button[@name='save']")).click();
+    }
+
+    public boolean isProductExists(Product product) {
+        wd.get("http://localhost/litecart/admin/?app=catalog&doc=catalog");
+        return isElementPresent(By.xpath(String.format("//a[text()='%s']", product.getName())));
     }
 }
 
