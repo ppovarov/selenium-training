@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -44,7 +45,11 @@ public class LitecartHelper extends HelperBase {
     }
 
     public void openEditCountryPage(String code) {
-        wd.get(String.format("http://localhost/litecart/admin/?app=countries&doc=edit_country&country_code=%s", code));
+        if (code.equals("")) {
+            wd.get("http://localhost/litecart/admin/?app=countries&doc=edit_country");
+        } else {
+            wd.get(String.format("http://localhost/litecart/admin/?app=countries&doc=edit_country&country_code=%s", code));
+        }
     }
 
     public void openGeoZonesPage() {
@@ -369,9 +374,31 @@ public class LitecartHelper extends HelperBase {
             wait.until(ExpectedConditions.stalenessOf(summaryTable));
         }
     }
-    
 
 
+    public void checkExternalLinks() {
+        String originalWindow = wd.getWindowHandle();
+        wait = new FluentWait<WebDriver>(wd)
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(500))
+                .ignoring(NoSuchElementException.class);
+
+        List<WebElement> links = wd.findElements(By.cssSelector(".fa-external-link"));
+        for (WebElement link : links) {
+            Set<String> existingWindows = wd.getWindowHandles();
+            link.click();
+            String newWindow = wait.until(anyWindowOtherThan(existingWindows));
+
+            wd.switchTo().window(newWindow);
+            System.out.println(wd.getTitle());
+            wd.close();
+
+            wd.switchTo().window(originalWindow);
+        }
+
+
+        System.out.println();
+    }
 }
 
 

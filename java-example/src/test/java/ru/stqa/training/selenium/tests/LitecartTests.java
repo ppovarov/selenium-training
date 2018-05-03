@@ -144,6 +144,13 @@ public class LitecartTests extends TestBase {
         app.litecart().clearCart();
     }
 
+    @Test
+    public void testLinksOpenInNewWindow() {
+        app.litecart().loginAdmin();
+        app.litecart().openEditCountryPage("");
+        app.litecart().checkExternalLinks();
+
+    }
 
 }
 

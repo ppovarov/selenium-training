@@ -1,9 +1,11 @@
 package ru.stqa.training.selenium.appmanager;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Wait;
 
 import java.io.File;
+import java.util.Set;
 
 public class HelperBase {
     protected WebDriver wd;
@@ -61,5 +63,17 @@ public class HelperBase {
     protected boolean areElementsPresent(WebElement element, By locator) {
         return element.findElements(locator).size() > 0;
     }
+
+    public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows){
+        return new ExpectedCondition<String>() {
+            @Override
+            public String apply(WebDriver wd) {
+                Set<String> handles = wd.getWindowHandles();
+                handles.removeAll(oldWindows);
+                return handles.size()>0 ? handles.iterator().next() : null;
+            }
+        };
+    }
+
 
 }
