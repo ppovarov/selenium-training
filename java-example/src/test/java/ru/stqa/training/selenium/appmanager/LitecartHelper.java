@@ -3,6 +3,7 @@ package ru.stqa.training.selenium.appmanager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.asserts.SoftAssert;
@@ -330,6 +331,47 @@ public class LitecartHelper extends HelperBase {
         wd.get("http://localhost/litecart/admin/?app=catalog&doc=catalog");
         return isElementPresent(By.xpath(String.format("//a[text()='%s']", product.getName())));
     }
+
+    public void addFirstProductToCart() {
+
+        click(By.cssSelector("div#box-most-popular li.product"));
+
+        wait = new FluentWait<WebDriver>(wd)
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(500))
+                .ignoring(NoSuchElementException.class);
+
+        Integer quantity = Integer.valueOf(wd.findElement(By.cssSelector("span.quantity")).getText());
+
+        if (isElementPresent(By.xpath("//select[@name='options[Size]']"))) {
+            new Select(wd.findElement(By.xpath("//select[@name='options[Size]']"))).selectByValue("Small");
+        }
+
+        click(By.cssSelector("button[name=add_cart_product]"));
+        wait.until(ExpectedConditions.textToBe(By.cssSelector("span.quantity"), String.valueOf(quantity + 1)));
+        openMainPage();
+    }
+
+    public void clearCart() {
+        click(By.xpath("//a[contains(text(),'Checkout')]"));
+
+        wait = new FluentWait<WebDriver>(wd)
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(500))
+                .ignoring(NoSuchElementException.class);
+
+        if (isElementPresent(By.cssSelector("li.shortcut"))) {
+            click(By.cssSelector("li.shortcut"));
+        }
+        while (isElementPresent(By.cssSelector("button[name=remove_cart_item]"))) {
+            WebElement summaryTable = wd.findElement(By.cssSelector("div#order_confirmation-wrapper"));
+            click(By.cssSelector("button[name=remove_cart_item]"));
+            wait.until(ExpectedConditions.stalenessOf(summaryTable));
+        }
+    }
+    
+
+
 }
 
 

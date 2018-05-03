@@ -135,6 +135,15 @@ public class LitecartTests extends TestBase {
         Assert.assertTrue(app.litecart().isProductExists(product));
     }
 
+    @Test
+    public void testAddProductToCart() {
+        app.litecart().openMainPage();
+        for (int i = 0; i < 3; i++) {
+            app.litecart().addFirstProductToCart();
+        }
+        app.litecart().clearCart();
+    }
+
 
 }
 
