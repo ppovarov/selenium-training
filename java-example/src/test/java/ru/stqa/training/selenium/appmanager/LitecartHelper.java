@@ -64,6 +64,10 @@ public class LitecartHelper extends HelperBase {
         wd.get("http://localhost/litecart/en/create_account");
     }
 
+    public void openCatalogPage() {
+        wd.get("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
+    }
+
 
     public void clickMenuItems() {
         SoftAssert softAssert = new SoftAssert();
@@ -239,8 +243,8 @@ public class LitecartHelper extends HelperBase {
         new Select(wd.findElement(By.xpath("//select[@name='country_code']"))).selectByValue("US");
 
         wait = new FluentWait<WebDriver>(wd)
-                .withTimeout(Duration.ofMillis(100))
-                .pollingEvery(Duration.ofMillis(10))
+                .withTimeout(Duration.ofMillis(500))
+                .pollingEvery(Duration.ofMillis(50))
                 .ignoring(NoSuchElementException.class);
 
         WebElement select = wait.until(driver -> driver.findElement(By.xpath("//select[@name='zone_code']")));
@@ -398,6 +402,23 @@ public class LitecartHelper extends HelperBase {
 
 
         System.out.println();
+    }
+
+    public String checkBrowserLogsOpeningProducts() {
+        StringBuilder str = new StringBuilder();
+        openCatalogPage();
+
+        List<String> products = new ArrayList<>();
+        List<WebElement> links = wd.findElements(By.xpath("//form[@name='catalog_form']//a[contains(@href,'doc=edit_product') and not(@title='Edit')]"));
+        products = links.stream().map(WebElement::getText).collect(Collectors.toList());
+
+        for (String product : products) {
+            click(By.linkText(product));
+            wd.manage().logs().get("browser").getAll().forEach(logEntry -> str.append(logEntry.toString()));
+            openCatalogPage();
+        }
+        return str.toString();
+
     }
 }
 

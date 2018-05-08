@@ -152,6 +152,13 @@ public class LitecartTests extends TestBase {
 
     }
 
+    @Test
+    public void testBrowserLogs() {
+        app.litecart().loginAdmin();
+        String log = app.litecart().checkBrowserLogsOpeningProducts();
+        Assert.assertEquals(log, "");
+    }
+
 }
 
 

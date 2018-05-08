@@ -64,13 +64,13 @@ public class HelperBase {
         return element.findElements(locator).size() > 0;
     }
 
-    public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows){
+    public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows) {
         return new ExpectedCondition<String>() {
             @Override
             public String apply(WebDriver wd) {
                 Set<String> handles = wd.getWindowHandles();
                 handles.removeAll(oldWindows);
-                return handles.size()>0 ? handles.iterator().next() : null;
+                return handles.size() > 0 ? handles.iterator().next() : null;
             }
         };
     }
