@@ -1,5 +1,6 @@
 package ru.stqa.training.selenium.tests;
 
+import net.lightbody.bmp.core.har.Har;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
@@ -159,6 +160,15 @@ public class LitecartTests extends TestBase {
         Assert.assertEquals(log, "");
     }
 
+    @Test
+    public void testHttpResponsesUsingProxy() {
+        app.proxy.newHar();
+        app.litecart().loginAdmin();
+        Har har = app.proxy.endHar();
+        har.getLog().getEntries().forEach(l -> System.out.println(l.getResponse().getStatus() + ":" + l.getRequest().getUrl()));
+    }
+
+    
 }
 
 

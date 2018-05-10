@@ -1,6 +1,9 @@
 package ru.stqa.training.selenium.appmanager;
 
 import com.google.common.io.Files;
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,6 +11,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
@@ -23,8 +27,10 @@ import java.util.concurrent.TimeUnit;
 public class ApplicationManager {
 
     private final Properties properties;
-    WebDriver wd;
+    public WebDriver wd;
+    public BrowserMobProxy proxy;
     private String browser;
+
     private LitecartHelper litecartHelper;
 
     public ApplicationManager(String browser) {
@@ -60,6 +66,12 @@ public class ApplicationManager {
                     logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
                     chrOptions.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
                     */
+
+                    // Using with Proxy, see https://github.com/lightbody/browsermob-proxy
+                    proxy = new BrowserMobProxyServer();
+                    proxy.start(0);
+                    Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+                    chrOptions.setCapability(CapabilityType.PROXY, seleniumProxy);
 
                     //wd = new ChromeDriver(chrOptions);
                     wd = new EventFiringWebDriver(new ChromeDriver(chrOptions));
