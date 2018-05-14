@@ -16,6 +16,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import ru.stqa.training.selenium.pages.CartPage;
+import ru.stqa.training.selenium.pages.MainPage;
+import ru.stqa.training.selenium.pages.ProductPage;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,6 +35,11 @@ public class ApplicationManager {
     private String browser;
 
     private LitecartHelper litecartHelper;
+
+    private MainPage mainPage;
+    private ProductPage productPage;
+    private CartPage cartPage;
+
 
     public ApplicationManager(String browser) {
         this.browser = browser;
@@ -91,7 +99,13 @@ public class ApplicationManager {
 
         wd.manage().timeouts().implicitlyWait(Integer.parseInt(property("webdriver.wait")), TimeUnit.SECONDS);
         wd.get(property("web.baseURL"));
+
         litecartHelper = new LitecartHelper(wd);
+
+        mainPage = new MainPage(wd);
+        productPage = new ProductPage(wd);
+        cartPage = new CartPage(wd);
+
     }
 
     public void stop() {
@@ -101,6 +115,10 @@ public class ApplicationManager {
     public LitecartHelper litecart() {
         return litecartHelper;
     }
+
+    public MainPage mainPage() {return mainPage;}
+    public ProductPage productPage() {return productPage;}
+    public CartPage cartPage() {return cartPage;}
 
     public String property(String key) {
         return properties.getProperty(key);

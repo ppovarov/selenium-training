@@ -146,6 +146,15 @@ public class LitecartTests extends TestBase {
     }
 
     @Test
+    public void testAddProductToCart2() {
+        for (int i = 0; i < 30; i++) {
+            app.mainPage().open().openFirstProduct();
+            app.productPage().addToCart();
+        }
+        app.cartPage().open().clearCart();
+    }
+
+    @Test
     public void testLinksOpenInNewWindow() {
         app.litecart().loginAdmin();
         app.litecart().openEditCountryPage("");
